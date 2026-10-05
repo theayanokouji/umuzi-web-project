@@ -10,7 +10,7 @@ fetch("data/covid-19.json")
             const optionSelected = document.createElement("option");
 
             optionSelected.value = country.code;
-            optionSelected.textContent = country.name;
+            optionSelected.textContent = country.country;
             countrySelector.appendChild(optionSelected);
         });
 
