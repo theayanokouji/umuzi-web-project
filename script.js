@@ -6,6 +6,7 @@ fetch("data/covid-19.json")
 
         const countrySelector = document.getElementById("countrySelector");
 
+        // -- 1. Populating the country selector dropdown --
         data.countries.forEach(country => {
             const optionSelected = document.createElement("option");
 
@@ -14,7 +15,7 @@ fetch("data/covid-19.json")
             countrySelector.appendChild(optionSelected);
         });
 
-        // implementing the chart.js to display the line graph
+        // -- 2. Implement the line chart -- 
         let chart = null;
 
         function drawChart(countryCode) {
@@ -54,9 +55,61 @@ fetch("data/covid-19.json")
             if (countrySelector.value) drawChart(countrySelector.value);
         });
 
-        // display the first country so the chart is visible when you load the page
+        // -- 3. Implementing bar chart --
+        let barChart = null;
+
+        function drawBarChart(country) {
+            const latest = country.data[country.data.length - 1];
+
+            if (barChart) barChart.destroy();
+
+            barChart = new Chart(document.getElementById("barChart"), {
+                type: "bar",
+                data: {
+                    labels: ["Confirmed", "Deaths", "Recovered"],
+                    datasets: [{
+                        label: `${country.country} (as of ${latest.date})`,
+                        data: [latest.confirmed, latest.deaths, latest.recovered],
+                        backgroundColor: ["#e74c3c", "#7f8c8d", "#2ecc71"]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        // -- 4. Metric cards --
+        function updateCards(country) {
+            const latest = country.data[country.data.length - 1];
+            const fatality = latest.confirmed > 0
+                ? ((latest.deaths / latest.confirmed) * 100).toFixed(2) + "%"
+                : "0%";
+
+            document.getElementById("confirmedValue").textContent = latest.confirmed.toLocaleString();
+            document.getElementById("deathsValue").textContent = latest.deaths.toLocaleString();
+            document.getElementById("recoveredValue").textContent = latest.recovered.toLocaleString();
+            document.getElementById("fatalityValue").textContent = fatality;
+        }
+
+        // -- 5. Update dashboard based on selected country --
+        function updateDashboard(countryCode) {
+            const selected = data.countries.find(c => c.code === countryCode);
+            if (!selected) return;
+
+            drawChart(countryCode);   // my existing line chart
+            drawBarChart(selected);
+            updateCards(selected);
+        }
+
+        countrySelector.addEventListener("change", () => {
+            if (countrySelector.value) updateDashboard(countrySelector.value);
+        });
+
+        // Show the first country on load
         countrySelector.value = data.countries[0].code;
-        drawChart(data.countries[0].code);
+        updateDashboard(data.countries[0].code);
 
     })
     .catch(error => {

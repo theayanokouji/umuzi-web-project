@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Country Selector</title>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <h1>Select a Country</h1>
@@ -10,8 +11,18 @@
         <select id="countrySelector">
             <option value="">Select a country</option>
         </select>
+        <div class="cards">
+            <div class="card"><h3>Confirmed</h3><p id="confirmedValue">-</p></div>
+            <div class="card"><h3>Deaths</h3><p id="deathsValue">-</p></div>
+            <div class="card"><h3>Recovered</h3><p id="recoveredValue">-</p></div>
+            <div class="card"><h3>Fatality Rate</h3><p id="fatalityValue">-</p></div>
+        </div>
+
         <!-- Line will be displayed using this canvas -->
         <canvas id="casesChart" width="800" height="600"></canvas> 
+
+        <canvas id="barChart" width="800" height="600"></canvas>
+
         <!-- I will use chart.js to display the line -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="script.js"></script>
